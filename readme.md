@@ -26,4 +26,3 @@ session attributes will survive (simulates situation when node is restarted or r
 * third call after 2 minutes (when redis timeout occurs)  
 everything is cleared  
 3
-4
