@@ -27,3 +27,4 @@ session attributes will survive (simulates situation when node is restarted or r
 everything is cleared  
 
 3
+4
