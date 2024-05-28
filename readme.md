@@ -28,3 +28,4 @@ everything is cleared
 
 test
 test2
+test3
