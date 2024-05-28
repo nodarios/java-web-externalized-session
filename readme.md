@@ -25,10 +25,3 @@ adds new session attribute and prints all session attributes
 session attributes will survive (simulates situation when node is restarted or request is redirected to another node)  
 * third call after 2 minutes (when redis timeout occurs)  
 everything is cleared  
-
-test
-test2
-test3
-test4
-test5
-test6
