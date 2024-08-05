@@ -33,7 +33,7 @@ public class TestRedis {
             String host = "127.0.0.1";
             int port = 6379;
             int timeout = 2000;
-            String password = null;
+            String password = "yourpassword";
             int database = 0;
             boolean ssl = true;
 
