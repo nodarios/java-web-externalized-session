@@ -3,7 +3,6 @@ package org.example;
 import redis.clients.jedis.*;
 
 import javax.net.ssl.*;
-import java.io.*;
 import java.security.*;
 import java.security.cert.*;
 
@@ -11,22 +10,7 @@ public class TestRedis {
 
     public static void main(String[] args) {
         try {
-            // Load CA certificate
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            InputStream caInput = TestRedis.class.getClassLoader().getResourceAsStream("ca.crt");
-            X509Certificate caCert = (X509Certificate) cf.generateCertificate(caInput);
-
-            // Initialize SSL context
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-            ks.load(null, null);
-            ks.setCertificateEntry("caCert", caCert);
-
-            // Set up TrustManager
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            tmf.init(ks);
-            sslContext.init(null, tmf.getTrustManagers(), new SecureRandom());
-            SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+            SSLSocketFactory sslSocketFactory = getSslSocketFactory();
 
             // Configure Jedis pool with SSL
             JedisPoolConfig poolConfig = new JedisPoolConfig();
@@ -48,5 +32,46 @@ public class TestRedis {
             e.printStackTrace();
         }
     }
+
+    private static SSLSocketFactory getSslSocketFactory() {
+        SSLSocketFactory sslSocketFactory = null;
+        try {
+            //CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            //// make sure file exists
+            //InputStream caInput = TestRedis.class.getClassLoader().getResourceAsStream("ca.crt");
+            //X509Certificate caCert = (X509Certificate) cf.generateCertificate(caInput);
+            //
+            //KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            //ks.load(null, null);
+            //ks.setCertificateEntry("caCert", caCert);
+            //
+            //TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            //tmf.init(ks);
+
+            TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return null;
+                        }
+
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                        }
+
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                        }
+                    }
+            };
+
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            //sslContext.init(null, tmf.getTrustManagers(), new SecureRandom());
+            sslContext.init(null, trustAllCerts, new SecureRandom());
+            sslSocketFactory = sslContext.getSocketFactory();
+        } catch (Exception e) {
+            //LOGGER.error("error initialization ssl context", e);
+            System.out.println("error initialization ssl context" + e);
+        }
+        return sslSocketFactory;
+    }
+
 }
 
